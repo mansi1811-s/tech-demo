@@ -1,3 +1,3 @@
-# tech-demo
+# CodeQL
 
 Demonstrating security scanning using CodeQL
