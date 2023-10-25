@@ -1,8 +1,12 @@
 from flask import Flask
+from decouple import config 
 app = Flask(__name__)
 
-#password in plain text
-password = "xyz"
+#passing password as environment variable
+password = config('PASSWORD')
+
+# #password in plain text
+# password = "xyz"
 
 @app.route("/")
 def hello():
