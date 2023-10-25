@@ -16,12 +16,33 @@
 # if __name__ == "__main__":
 #     app.run()
 
-import mysql.connector
+# import mysql.connector
 
-with mysql.connector.connect(user='user', password='password', host='host', database='database') as conn:
-    cursor = conn.cursor()
+# with mysql.connector.connect(user='user', password='password', host='host', database='database') as conn:
+#     cursor = conn.cursor()
     
-    name = "John"
-    query = "SELECT * FROM users WHERE name = %s"
-    cursor.execute(query, (name,))
-    rows = cursor.fetchall()
+#     name = "John"
+#     query = "SELECT * FROM users WHERE name = %s"
+#     cursor.execute(query, (name,))
+#     rows = cursor.fetchall()
+
+@app.route("/login")
+def login():
+
+  username = request.values.get('username')
+  password = request.values.get('password')
+
+  # Prepare database connection
+  db = pymysql.connect("localhost")
+  cursor = db.cursor()
+
+  # Execute the vulnerable SQL query concatenating user-provided input.
+  cursor.execute("SELECT * FROM users WHERE username = '%s' AND password = '%s'" % (username, password))
+
+  # If the query returns any matching record, consider the current user logged in.
+  record = cursor.fetchone()
+  if record:
+    session['logged_user'] = username
+
+  # disconnect from server
+  db.close()
