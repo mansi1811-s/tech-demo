@@ -26,23 +26,18 @@
 #     cursor.execute(query, (name,))
 #     rows = cursor.fetchall()
 
-@app.route("/login")
-def login():
 
-  username = request.values.get('username')
-  password = request.values.get('password')
+import mysql.connector
 
-  # Prepare database connection
-  db = pymysql.connect("localhost")
-  cursor = db.cursor()
+with mysql.connector.connect(user='user', password='password', host='host', database='database') as conn:
+    cursor = conn.cursor()
 
-  # Execute the vulnerable SQL query concatenating user-provided input.
-  cursor.execute("SELECT * FROM users WHERE username = '%s' AND password = '%s'" % (username, password))
+    name = "John"
 
-  # If the query returns any matching record, consider the current user logged in.
-  record = cursor.fetchone()
-  if record:
-    session['logged_user'] = username
+    # Sanitize and validate user input
+    if "'" in name:  # Check for single quotes (') in the input
+        raise ValueError("Invalid input")
 
-  # disconnect from server
-  db.close()
+    query = "SELECT * FROM users WHERE name = %s" % name  # Directly incorporate sanitized input
+    cursor.execute(query)
+    rows = cursor.fetchall()
