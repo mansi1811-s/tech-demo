@@ -5,8 +5,8 @@
 # #passing password as environment variable
 # password = config('PASSWORD')
 
-# # #password in plain text
-# # password = "xyz"
+# #password in plain text
+# password = "xyz"
 
 # @app.route("/")
 # def hello():
@@ -25,19 +25,13 @@
 #     query = "SELECT * FROM users WHERE name = %s"
 #     cursor.execute(query, (name,))
 #     rows = cursor.fetchall()
-
-
 import mysql.connector
 
-with mysql.connector.connect(user='user', password='password', host='host', database='database') as conn:
-    cursor = conn.cursor()
-
+cnx = mysql.connector.connect(user='scott', password='password',
+                              host='127.0.0.1',
+                              database='employees')
     name = "John"
+    query = "SELECT * FROM users WHERE name = %s"
+    cursor.execute(query, (name,))
+cnx.close()
 
-    # Sanitize and validate user input
-    if "'" in name:  # Check for single quotes (') in the input
-        raise ValueError("Invalid input")
-
-    query = "SELECT * FROM users WHERE name = %s" % name  # Directly incorporate sanitized input
-    cursor.execute(query)
-    rows = cursor.fetchall()
